@@ -6,10 +6,10 @@ CREATE TABLE personas
 	idpersona	INT AUTO_INCREMENT PRIMARY KEY,
 	nombres		VARCHAR(50) 	NOT NULL,
 	apellidos	VARCHAR(50) 	NOT NULL,
-	dni 		CHAR(8)		NOT NULL,
-	telefono	CHAR(9)		NULL,
+	dni 			CHAR(8)			NOT NULL,
+	telefono		CHAR(9)			NULL,
 	direccion	VARCHAR(100) 	NULL,
-	email		VARCHAR(100)    NULL,
+	email			VARCHAR(100)   NULL,
 	CONSTRAINT uk_dni UNIQUE(dni)
 )
 ENGINE = INNODB
@@ -28,9 +28,9 @@ SELECT * FROM personas
 CREATE TABLE usuarios
 (
 	idusuario	INT AUTO_INCREMENT PRIMARY KEY,
-	idpersona	INT 		NOT NULL,
-	usuario		VARCHAR(50)	NOT NULL,
-	clave		VARCHAR(150)	NOT NULL,
+	idpersona	INT 				NOT NULL,
+	usuario		VARCHAR(50)		NOT NULL,
+	clave			VARCHAR(150)	NOT NULL,
 	CONSTRAINT ck_idpersona FOREIGN KEY (idpersona) REFERENCES personas(idpersona)
 )
 ENGINE = INNODB
@@ -42,33 +42,54 @@ SELECT * FROM usuarios
 -- -------------------------------------------------------
 CREATE TABLE prendas
 (
-	idprendas		INT AUTO_INCREMENT PRIMARY KEY,
-	talla			CHAR(2)		NOT NULL,
-	tipoprenda		VARCHAR(30)	NOT NULL,
-	color			VARCHAR(30)	NOT NULL,
-	descripcion		VARCHAR(100)	NULL
+	idprenda 	INT AUTO_INCREMENT PRIMARY KEY,
+	tipoprenda	VARCHAR(30)	NOT NULL,
+	descripcion	VARCHAR(100)	NULL
 )
 ENGINE = INNODB
 
-CREATE TABLE proveedores
+INSERT INTO prendas(tipoprenda) VALUES
+('Polos'),
+('Jeans'),
+('Camisas'),
+('Shorts'),
+('Casacas'),
+('Buzos')
+
+CREATE TABLE entrada
 (
-	idproveedor		INT AUTO_INCREMENT PRIMARY KEY,
-	nombreCompañia	VARCHAR(100)	NOT NULL,
-	nombreContacto	VARCHAR(50)		NOT NULL,
-	direccion		VARCHAR(100)	NOT NULL,
-	telefono			CHAR(9)			NULL	
+	identrada		INT AUTO_INCREMENT PRIMARY KEY,
+	idprenda 		INT 			NOT NULL,
+	cantidad			INT 			NOT NULL,
+	fechaIngreso	DATE 			NOT NULL,
+	observaciones	VARCHAR(200)    NULL,
+	CONSTRAINT fk_idprenda FOREIGN KEY (idprenda) REFERENCES prendas(idprenda)
+)
+ENGINE = INNODB
+
+INSERT INTO entrada(idprenda, cantidad, fechaIngreso, observaciones) VALUES
+(2, 123, '2023/05/28', 'Ingreso de Jeans clasicos')
+
+CREATE TABLE salidas
+(
+	idsalida			INT AUTO_INCREMENT PRIMARY KEY,
+	idprenda 		INT 			NOT NULL,
+	idpersona 		INT 			NOT NULL,
+	cantidad			INT 			NOT NULL,
+	fechaSalida		DATE 			NOT NULL,
+	observaciones	VARCHAR(200)    NULL,
+	CONSTRAINT fk_idprenda_sali FOREIGN KEY (idprenda) REFERENCES prendas(idprenda),
+	CONSTRAINT fk_idpersona_sali FOREIGN KEY (idpersona) REFERENCES personas(idpersona)
 )
 ENGINE = INNODB
 
 CREATE TABLE almacen
 (
 	idalmacen		INT AUTO_INCREMENT PRIMARY KEY,
-	idprenda			INT 	NOT NULL,
-	idproveedor		INT 	NOT NULL,
-	direccion		VARCHAR(50) NOT NULL,
-	cantprendas		INT 		NOT NULL,
-	CONSTRAINT ck_idprenda	FOREIGN KEY (idprenda) REFERENCES prendas(idprendas),
-	CONSTRAINT ck_idproveedor	FOREIGN KEY (idproveedor) REFERENCES proveedores(idproveedor)
+	idprenda			INT 			NOT NULL,
+	numalmacen		INT 			NOT NULL,
+	cantprendas		INT 			NOT NULL,
+	CONSTRAINT fk_idprenda_alm FOREIGN KEY (idprenda) REFERENCES prendas(idprenda)
 )
 ENGINE = INNODB
 
@@ -102,3 +123,40 @@ CALL spu_usuarios_login('anny_fab')
 UPDATE usuarios
 	SET clave= '$2y$10$jeI1KKVn6bfF926j0gZHreEyZbjosQzEnn2cH2J/73HnZ0Ex46oV2'
 	WHERE idusuario = 1;
+	
+-- Listar tipos
+DELIMITER $$
+CREATE PROCEDURE spu_prendas_listar()
+BEGIN
+	SELECT idprenda, tipoprenda FROM prendas ORDER BY idprenda;
+END$$
+
+CALL spu_prendas_listar()
+
+-- Registrar entrada de prendas
+DELIMITER $$
+CREATE PROCEDURE spu_entrada_registrar
+(
+	IN _idprenda		INT,
+	IN _cantidad		INT,
+	IN _fechaIngreso 	DATE,
+	IN _observaciones	VARCHAR(200)
+)
+BEGIN
+	IF _observaciones = '' THEN SET _observaciones = NULL;END IF;
+	INSERT INTO entrada(idprenda, cantidad, fechaIngreso, observaciones) VALUES
+	(_idprenda, _cantidad, _fechaIngreso, _observaciones);
+END$$
+
+CALL spu_entrada_registrar(1, 210, '2023/05/29', 'Polos manga larga en todas las tallas');
+
+DELIMITER $$
+CREATE PROCEDURE spu_listar_entrada()
+BEGIN
+	SELECT entrada.`identrada`, prendas.`tipoprenda`, entrada.`cantidad`, 
+			entrada.`fechaIngreso`, entrada.`observaciones` 
+	FROM entrada
+	INNER JOIN prendas ON prendas.`idprenda` = entrada.`idprenda`;
+END $$
+
+SELECT * FROM entrada
