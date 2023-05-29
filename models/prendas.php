@@ -9,12 +9,23 @@ class Prendas extends Conexion{
     $this->conexion = parent::getConexion();
   }
 
-  public function listarPrenda(){
+  public function listarTipoPrenda(){
     try{
-      $consulta = $this->conexion->prepare("CALL spu_prendas_listar()");
+      $consulta = $this->conexion->prepare("CALL spu_tipoprenda_listar()");
       $consulta->execute();
 
       return $consulta->fetchAll(PDO::FETCH_ASSOC);
+    }
+    catch(Exception $e){
+      die($e->getMessage());
+    }
+  }
+
+  public function listarDescripcion($idtipoprenda = 0){
+    try{
+      $consulta = $this->conexion->prepare("CALL spu_prendas_filtrar(?)");
+      $consulta->execute(array($idtipoprenda));
+      return $consulta->fetchAll(PDO::FETCH_ASSOC); 
     }
     catch(Exception $e){
       die($e->getMessage());

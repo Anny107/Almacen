@@ -29,60 +29,82 @@ CREATE TABLE usuarios
 (
 	idusuario	INT AUTO_INCREMENT PRIMARY KEY,
 	idpersona	INT 				NOT NULL,
-	usuario		VARCHAR(50)		NOT NULL,
+	email			VARCHAR(50)		NOT NULL,
 	clave			VARCHAR(150)	NOT NULL,
 	CONSTRAINT ck_idpersona FOREIGN KEY (idpersona) REFERENCES personas(idpersona)
 )
 ENGINE = INNODB
 
-INSERT INTO usuarios(idpersona, usuario, clave) VALUES
+INSERT INTO usuarios(idpersona, email, clave) VALUES
 (6, 'anny_fab', '1628')
 
 SELECT * FROM usuarios
 -- -------------------------------------------------------
-CREATE TABLE prendas
+
+CREATE TABLE tipoPrenda
 (
-	idprenda 	INT AUTO_INCREMENT PRIMARY KEY,
-	tipoprenda	VARCHAR(30)	NOT NULL,
-	descripcion	VARCHAR(100)	NULL
+	idtipoprenda	INT AUTO_INCREMENT PRIMARY KEY,
+	tipoprenda		VARCHAR(30) NOT NULL,
+	CONSTRAINT uk_tipoprenda UNIQUE (tipoprenda)
 )
 ENGINE = INNODB
 
-INSERT INTO prendas(tipoprenda) VALUES
-('Polos'),
-('Jeans'),
-('Camisas'),
-('Shorts'),
-('Casacas'),
-('Buzos')
-
-CREATE TABLE entrada
+INSERT INTO tipoPrenda(tipoprenda) VALUES
+	('Polo'),
+	('Jeans'),
+	('Camisas'),
+	('Shorts'),
+	('Casacas')
+	
+CREATE TABLE prendas
 (
-	identrada		INT AUTO_INCREMENT PRIMARY KEY,
+	idprenda 		INT AUTO_INCREMENT PRIMARY KEY,
+	idtipoprenda	INT 				NOT NULL,
+	descripcion		VARCHAR(100)	NULL,
+	CONSTRAINT fk_idtipoprenda FOREIGN KEY(idtipoprenda) REFERENCES tipoPrenda(idtipoprenda)
+)
+ENGINE = INNODB
+
+INSERT INTO prendas(idtipoprenda, descripcion) VALUES
+(1,'Cuello redondo'),
+(1,'Cuello V'),
+(1,'Camisero'),
+(1,'Oversize'),
+(2,'Clasicos'),
+(2,'Rasgados'),
+(2,'Strech'),
+(2,'Urbanos'),
+(3,'Vestir'),
+(3,'Jean'),
+(3,'Alicradas'),
+(3,'Drill'),
+(4,'Playeros'),
+(4,'Jeans'),
+(4,'Strech'),
+(4,'Drill'),
+(5,'Cuero'),
+(5,'Con cierre'),
+(5,'Con capuchas'),
+(5,'Basicas')
+
+SELECT * FROM prendas
+
+CREATE TABLE movimientos
+(
+	idmovimiento	INT AUTO_INCREMENT PRIMARY KEY,
 	idprenda 		INT 			NOT NULL,
+	tipo 				CHAR(2)		NOT NULL,
 	cantidad			INT 			NOT NULL,
-	fechaIngreso	DATE 			NOT NULL,
+	fecha				DATETIME 	NOT NULL DEFAULT NOW(),
 	observaciones	VARCHAR(200)    NULL,
 	CONSTRAINT fk_idprenda FOREIGN KEY (idprenda) REFERENCES prendas(idprenda)
 )
 ENGINE = INNODB
 
-INSERT INTO entrada(idprenda, cantidad, fechaIngreso, observaciones) VALUES
-(2, 123, '2023/05/28', 'Ingreso de Jeans clasicos')
+INSERT INTO movimientos(idprenda, tipo, cantidad, observaciones) VALUES
+(2,'EN', 123, 'Ingreso de polos en talla M-L')
 
-CREATE TABLE salidas
-(
-	idsalida			INT AUTO_INCREMENT PRIMARY KEY,
-	idprenda 		INT 			NOT NULL,
-	idpersona 		INT 			NOT NULL,
-	cantidad			INT 			NOT NULL,
-	fechaSalida		DATE 			NOT NULL,
-	observaciones	VARCHAR(200)    NULL,
-	CONSTRAINT fk_idprenda_sali FOREIGN KEY (idprenda) REFERENCES prendas(idprenda),
-	CONSTRAINT fk_idpersona_sali FOREIGN KEY (idpersona) REFERENCES personas(idpersona)
-)
-ENGINE = INNODB
-
+SELECT * FROM movimientos
 CREATE TABLE almacen
 (
 	idalmacen		INT AUTO_INCREMENT PRIMARY KEY,
@@ -126,13 +148,28 @@ UPDATE usuarios
 	
 -- Listar tipos
 DELIMITER $$
-CREATE PROCEDURE spu_prendas_listar()
+CREATE PROCEDURE spu_tipoprenda_listar()
 BEGIN
-	SELECT idprenda, tipoprenda FROM prendas ORDER BY idprenda;
+	SELECT idtipoprenda, tipoprenda FROM tipoPrenda ORDER BY idtipoprenda;
 END$$
 
-CALL spu_prendas_listar()
+CALL spu_tipoprenda_listar()
 
+-- Listar prendas
+
+DELIMITER $$
+CREATE PROCEDURE spu_prendas_filtrar
+(
+	IN _idtipoprenda INT
+)
+BEGIN
+	SELECT prendas.`idprenda`, prendas.`descripcion` FROM prendas
+	INNER JOIN tipoPrenda ON tipoPrenda.`idtipoprenda` = prendas.`idtipoprenda`
+	WHERE prendas.`idtipoprenda` = _idtipoprenda
+	ORDER BY prendas.`idprenda`;
+END$$
+
+CALL spu_prendas_filtrar(3)
 -- Registrar entrada de prendas
 DELIMITER $$
 CREATE PROCEDURE spu_entrada_registrar

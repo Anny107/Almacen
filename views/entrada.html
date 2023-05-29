@@ -31,21 +31,45 @@
       </nav>
 
       <div class="container">
-        <div class="row mt-3">
+        <div class="row g-2 mt-3">
+          
           <div class="col-md-4">
             <form id="form-prendas" action="">
               <div class="card">
                 <div class="card-header">
-                Ingreso de prendas
+                Registro de entrada y salida
                 </div>
                 <div class="card-body">
-                  <div class="mb-3">
-                    <div class="mb-3">
-                      <label for="tipo" class="form-label">Tipo:</label>
-                      <select name="tipo" id="tipo" class="form-select form-select-sm" autofocus>
-                      <option value="">Seleccione</option>
-                    </select>
+                  <div class="mb-3 row g-2">
+                      <div class="form-check">
+                      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                      <label class="form-check-label" for="flexRadioDefault1">
+                        Entrada
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                      <label class="form-check-label" for="flexRadioDefault2">
+                        Salida
+                      </label>
+                    </div>
                   </div>
+                  
+                  <div class="mb-3">
+                    <div class="mb-3 row g-2">
+                      <div class="col-md">
+                        <label for="tipo" class="form-label">Categoria:</label>
+                         <select name="tipo" id="tipo" class="form-select form-select-sm" autofocus>
+                          <option value="">Seleccione</option>
+                        </select>
+                      </div>
+                      <div class="col-md">
+                        <label for="descripcion" class="form-label">Descripcion:</label>
+                         <select name="descripcion" id="descripcion" class="form-select form-select-sm" autofocus>
+                          <option value="">Seleccione</option>
+                        </select>
+                      </div>
+                    </div>
                   <div class = "mb-3">
                     <label for="observaciones" class="form-label">Observaciones:</label>
                     <input type="text" class="form-control form-control-sm" id="observaciones">
@@ -54,11 +78,6 @@
                     <label for="cantidad" class="form-label">Cantidad:</label>
                     <input type="text" class="form-control form-control-sm" id="cantidad">
                   </div>
-                  <div class="mb-3">
-                    <label for="fecha" class="form-label">Fecha:</label>
-                    <input type="date" class="form-control form-control-sm" id="fecha">
-                  </div>
-
                 </div>
                 <div class="card-footer text-muted">
                   <div class="d-grid gap-2">
@@ -101,6 +120,7 @@
           const observaciones = document.querySelector("#observaciones");
           const cantidad = document.querySelector("#cantidad");
           const fecha = document.querySelector("#fecha");
+          const descripcion = document.querySelector("#descripcion");
           const btguardar = document.querySelector("#guardar");
           const btreiniciar = document.querySelector("#reiniciar");
           const tabla = document.querySelector("#tabla-entrada");
@@ -109,7 +129,7 @@
 
           function mostrarTipo(){
             const parametros = new URLSearchParams();
-            parametros.append("operacion","listarPrenda");
+            parametros.append("operacion","listarTipoPrenda");
             fetch('../controllers/prendas.controller.php',{
               method: 'POST',
               body: parametros
@@ -118,11 +138,31 @@
             .then(lista => {
               lista.forEach(element => {
                 const optionTag = document.createElement("option"); 
-                optionTag.value = element.idprenda;
+                optionTag.value = element.idtipoprenda;
                 optionTag.text= element.tipoprenda;
                 tipo.appendChild(optionTag);
               })
             }) 
+          }
+
+          function mostrarDescripcion(){
+            const parametros = new URLSearchParams();
+            parametros.append("operacion", "listarDescripcion");
+            parametros.append("idtipoprenda", parseInt(tipo.value))
+
+            fetch("../controllers/prendas.controller.php",{
+              method: 'POST',
+              body: parametros
+            })
+            .then(response => response.json())
+            .then(lista => {
+              lista.forEach(element => {
+                const optionTag = document.createElement("option");
+                optionTag.value = element.idprenda;
+                optionTag.text = element.descripcion;
+                descripcion.appendChild(optionTag);
+              })
+            })
           }
           
           function registrarEntrada(){
@@ -150,35 +190,36 @@
             }
           }
 
-          function listaEntrada(){
-            const parametros = new URLSearchParams();
-            parametros.append("operacion", "listarEntrada");
+          // function listaEntrada(){
+          //   const parametros = new URLSearchParams();
+          //   parametros.append("operacion", "listarEntrada");
 
-            fetch("../controllers/registro.controller.php", {
-              method: "POST",
-              body: parametros
-            })
-            .then(response => response.json())
-            .then(datos => {
-              cuerpoTabla.innerHTML = ``;
-              datos.forEach(element => {
-                const fila = 
-                `
-                <tr>
-                  <td>${element.identrada}</td>
-                  <td>${element.tipoprenda}</td>
-                  <td>${element.observaciones}</td>
-                  <td>${element.cantidad}</td>
-                  <td>${element.fechaIngreso}</td>
-                </tr>
-                `;
-                cuerpoTabla.innerHTML +=fila;
-              })
-            })
-          }
+          //   fetch("../controllers/registro.controller.php", {
+          //     method: "POST",
+          //     body: parametros
+          //   })
+          //   .then(response => response.json())
+          //   .then(datos => {
+          //     cuerpoTabla.innerHTML = ``;
+          //     datos.forEach(element => {
+          //       const fila = 
+          //       `
+          //       <tr>
+          //         <td>${element.identrada}</td>
+          //         <td>${element.tipoprenda}</td>
+          //         <td>${element.observaciones}</td>
+          //         <td>${element.cantidad}</td>
+          //         <td>${element.fechaIngreso}</td>
+          //       </tr>
+          //       `;
+          //       cuerpoTabla.innerHTML +=fila;
+          //     })
+          //   })
+          // }
 
         btguardar.addEventListener("click", registrarEntrada);
-        listaEntrada();
+        tipo.addEventListener("change", mostrarDescripcion);
+        // listaEntrada();
         mostrarTipo();
         })
       </script>
