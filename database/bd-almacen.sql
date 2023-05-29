@@ -6,10 +6,10 @@ CREATE TABLE personas
 	idpersona	INT AUTO_INCREMENT PRIMARY KEY,
 	nombres		VARCHAR(50) 	NOT NULL,
 	apellidos	VARCHAR(50) 	NOT NULL,
-	dni 			CHAR(8)			NOT NULL,
-	telefono		CHAR(9)			NULL,
+	dni 		CHAR(8)		NOT NULL,
+	telefono	CHAR(9)		NULL,
 	direccion	VARCHAR(100) 	NULL,
-	email			VARCHAR(100)   NULL,
+	email		VARCHAR(100)    NULL,
 	CONSTRAINT uk_dni UNIQUE(dni)
 )
 ENGINE = INNODB
@@ -21,16 +21,16 @@ INSERT INTO personas(nombres, apellidos, dni, telefono, direccion, email) VALUES
 	('Henry','Tapia Guzman','32695814','912563047','','henry.guz43@hotmail.com'),
 	('Tamara','Rosales Diaz','74302057','','Av.gamarra','tammy11@gmail.com'),
 	('Juliana','Sanchez Hernandez','44120366','','',''),
-	('Anny','Cabrera Napa','71788436','965380175','Av.Buenos aires','anny16072003@gmail.com'),
+	('Anny','Cabrera Napa','71788436','965380175','Av.Buenos aires','anny16072003@gmail.com')
 
 SELECT * FROM personas
 -- -------------------------------------------------------
 CREATE TABLE usuarios
 (
 	idusuario	INT AUTO_INCREMENT PRIMARY KEY,
-	idpersona	INT 				NOT NULL,
-	usuario		VARCHAR(50)		NOT NULL,
-	clave			VARCHAR(150)	NOT NULL,
+	idpersona	INT 		NOT NULL,
+	usuario		VARCHAR(50)	NOT NULL,
+	clave		VARCHAR(150)	NOT NULL,
 	CONSTRAINT ck_idpersona FOREIGN KEY (idpersona) REFERENCES personas(idpersona)
 )
 ENGINE = INNODB
@@ -43,9 +43,9 @@ SELECT * FROM usuarios
 CREATE TABLE prendas
 (
 	idprendas		INT AUTO_INCREMENT PRIMARY KEY,
-	talla				CHAR(2)			NOT NULL,
-	tipoprenda		VARCHAR(30)		NOT NULL,
-	color				VARCHAR(30)		NOT NULL,
+	talla			CHAR(2)		NOT NULL,
+	tipoprenda		VARCHAR(30)	NOT NULL,
+	color			VARCHAR(30)	NOT NULL,
 	descripcion		VARCHAR(100)	NULL
 )
 ENGINE = INNODB
@@ -88,7 +88,7 @@ CREATE TABLE requerimientos
 DELIMITER $$
 CREATE PROCEDURE spu_usuarios_login 
 (
-	IN _usuario		VARCHAR(50)
+	IN _usuario	VARCHAR(50)
 )
 BEGIN 
 	SELECT idusuario, usuario, clave
