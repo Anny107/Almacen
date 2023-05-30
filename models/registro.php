@@ -42,4 +42,15 @@ class Registro extends Conexion{
       die($e->getMessage());
     }
   }
+
+  public function reporteFecha($fecha){
+    try{
+      $consulta = $this->conexion->prepare("CALL spu_movimiento_fecha(?)");
+      $consulta->execute(array($fecha));
+      return $consulta->fetchAll(PDO::FETCH_ASSOC);
+    }
+    catch(Exception $e){
+      die($e->getMessage());
+    }
+  }
 }

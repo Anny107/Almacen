@@ -198,6 +198,21 @@ END $$
 CALL spu_listar_movimientos()
 
 DELIMITER $$
+CREATE PROCEDURE spu_filtro_cate
+(
+	IN _idtipoprenda INT
+)
+BEGIN
+	movimientos.`idmovimiento`,tipoprenda.`tipoprenda`, prendas.`descripcion`,
+	movimientos.`tipo`, movimientos.`cantidad`, movimientos.`observaciones`  
+	FROM movimientos
+	INNER JOIN prendas ON prendas.`idprenda` = movimientos.`idprenda`
+	INNER JOIN tipoprenda ON tipoprenda.`idtipoprenda` = movimientos.`idtipoprenda`
+	WHERE movimientos.`idtipoprenda` = _idtipoprenda;
+END $$
+
+-- Reporte de dia
+DELIMITER $$
 CREATE PROCEDURE spu_movimiento_fecha
 (
 	IN _fecha DATE
@@ -205,7 +220,7 @@ CREATE PROCEDURE spu_movimiento_fecha
 BEGIN
 SELECT  
 	movimientos.`idmovimiento`,tipoprenda.`tipoprenda`, prendas.`descripcion`,
-	movimientos.`tipo`, movimientos.`cantidad`, movimientos.`observaciones`, movimientos.`fecha`  
+	movimientos.`tipo`, movimientos.`cantidad`, movimientos.`observaciones`  
 	FROM movimientos
 	INNER JOIN prendas ON prendas.`idprenda` = movimientos.`idprenda`
 	INNER JOIN tipoprenda ON tipoprenda.`idtipoprenda` = movimientos.`idtipoprenda`
