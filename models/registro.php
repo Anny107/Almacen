@@ -9,18 +9,19 @@ class Registro extends Conexion{
     $this->conexion = parent::getConexion();
   }
 
-  public function registrarEntrada($datos = []){
+  public function registrarMovimientos($datos = []){
     $respuesta = [
       "status" => false,
       "mensaje" => ""
     ];
     try{
-      $consulta = $this->conexion->prepare("CALL spu_entrada_registrar(?,?,?,?)");
+      $consulta = $this->conexion->prepare("CALL spu_movimientos_registrar(?,?,?,?,?)");
       $respuesta["status"] = $consulta->execute(
         array(
+          $datos["idtipoprenda"],
           $datos["idprenda"],
+          $datos["tipo"],
           $datos["cantidad"],
-          $datos["fechaIngreso"],
           $datos["observaciones"]
         )
       );
@@ -31,9 +32,9 @@ class Registro extends Conexion{
     return $respuesta;
   }
 
-  public function listarEntrada(){
+  public function listarMovimientos(){
     try{
-      $consulta = $this->conexion->prepare("CALL spu_listar_entrada()");
+      $consulta = $this->conexion->prepare("CALL spu_listar_movimientos()");
       $consulta->execute();
       return $consulta->fetchAll(PDO::FETCH_ASSOC);
     }

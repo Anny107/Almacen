@@ -29,14 +29,15 @@ CREATE TABLE usuarios
 (
 	idusuario	INT AUTO_INCREMENT PRIMARY KEY,
 	idpersona	INT 				NOT NULL,
-	email			VARCHAR(50)		NOT NULL,
+	email			VARCHAR(100)		NOT NULL,
 	clave			VARCHAR(150)	NOT NULL,
-	CONSTRAINT ck_idpersona FOREIGN KEY (idpersona) REFERENCES personas(idpersona)
+	CONSTRAINT ck_idpersona FOREIGN KEY (idpersona) REFERENCES personas(idpersona),
+	CONSTRAINT uk_email UNIQUE (email)
 )
 ENGINE = INNODB
 
 INSERT INTO usuarios(idpersona, email, clave) VALUES
-(6, 'anny_fab', '1628')
+(5, 'jul.san@gmail.com', '1234')
 
 SELECT * FROM usuarios
 -- -------------------------------------------------------
@@ -92,19 +93,20 @@ SELECT * FROM prendas
 CREATE TABLE movimientos
 (
 	idmovimiento	INT AUTO_INCREMENT PRIMARY KEY,
+	idtipoprenda	INT 			NOT NULL,	
 	idprenda 		INT 			NOT NULL,
-	tipo 				CHAR(2)		NOT NULL,
+	tipo 				VARCHAR(15)	NOT NULL,
 	cantidad			INT 			NOT NULL,
-	fecha				DATETIME 	NOT NULL DEFAULT NOW(),
+	fecha				DATE 	NOT NULL DEFAULT NOW(),
 	observaciones	VARCHAR(200)    NULL,
-	CONSTRAINT fk_idprenda FOREIGN KEY (idprenda) REFERENCES prendas(idprenda)
+	CONSTRAINT fk_idprenda FOREIGN KEY (idprenda) REFERENCES prendas(idprenda),
+	CONSTRAINT fk_idtipoprenda_MOV FOREIGN KEY(idtipoprenda) REFERENCES tipoPrenda(idtipoprenda)
 )
 ENGINE = INNODB
 
-INSERT INTO movimientos(idprenda, tipo, cantidad, observaciones) VALUES
-(2,'EN', 123, 'Ingreso de polos en talla M-L')
+INSERT INTO movimientos(idtipoprenda,idprenda, tipo, cantidad, observaciones) VALUES
+(1,2,'entrada', 115, 'Ingreso de polos en talla M-L')
 
-SELECT * FROM movimientos
 CREATE TABLE almacen
 (
 	idalmacen		INT AUTO_INCREMENT PRIMARY KEY,
@@ -131,19 +133,21 @@ CREATE TABLE requerimientos
 DELIMITER $$
 CREATE PROCEDURE spu_usuarios_login 
 (
-	IN _usuario	VARCHAR(50)
+	IN _email	VARCHAR(100)
 )
 BEGIN 
-	SELECT idusuario, usuario, clave
+	SELECT usuarios.`idusuario`, personas.`nombres`, personas.`apellidos`,
+			usuarios.`email`, usuarios.`clave`
 	FROM usuarios
-	WHERE usuario =_usuario;
+	INNER JOIN personas ON personas.`idpersona` = usuarios.`idpersona`
+	WHERE usuarios.`email` =_email;
 END $$
 
-CALL spu_usuarios_login('anny_fab')
+CALL spu_usuarios_login('jul.san@gmail.com')
 
 -- Actualizar contraseña
 UPDATE usuarios
-	SET clave= '$2y$10$jeI1KKVn6bfF926j0gZHreEyZbjosQzEnn2cH2J/73HnZ0Ex46oV2'
+	SET clave= '$2y$10$SCcG.69BYXhCtJLTIAv0guAFYQxTQMBeghuMAAsJgyvf.D0DHTy22'
 	WHERE idusuario = 1;
 	
 -- Listar tipos
@@ -172,28 +176,32 @@ END$$
 CALL spu_prendas_filtrar(3)
 -- Registrar entrada de prendas
 DELIMITER $$
-CREATE PROCEDURE spu_entrada_registrar
+CREATE PROCEDURE spu_movimientos_registrar
 (
+	IN _idtipoprenda	INT,
 	IN _idprenda		INT,
+	IN _tipo				VARCHAR(15),
 	IN _cantidad		INT,
-	IN _fechaIngreso 	DATE,
 	IN _observaciones	VARCHAR(200)
 )
 BEGIN
 	IF _observaciones = '' THEN SET _observaciones = NULL;END IF;
-	INSERT INTO entrada(idprenda, cantidad, fechaIngreso, observaciones) VALUES
-	(_idprenda, _cantidad, _fechaIngreso, _observaciones);
+	INSERT INTO movimientos(idtipoprenda,idprenda, tipo, cantidad, observaciones) VALUES
+	(_idtipoprenda,_idprenda, _tipo, _cantidad, _observaciones);
 END$$
 
-CALL spu_entrada_registrar(1, 210, '2023/05/29', 'Polos manga larga en todas las tallas');
+CALL spu_movimientos_registrar(3,9,'entrada', 210, '');
 
 DELIMITER $$
-CREATE PROCEDURE spu_listar_entrada()
+CREATE PROCEDURE spu_listar_movimientos()
 BEGIN
-	SELECT entrada.`identrada`, prendas.`tipoprenda`, entrada.`cantidad`, 
-			entrada.`fechaIngreso`, entrada.`observaciones` 
-	FROM entrada
-	INNER JOIN prendas ON prendas.`idprenda` = entrada.`idprenda`;
+	SELECT  
+	movimientos.`idmovimiento`,tipoprenda.`tipoprenda`, prendas.`descripcion`,
+	movimientos.`tipo`, movimientos.`cantidad`, movimientos.`observaciones`, movimientos.`fecha`  
+	FROM movimientos
+	INNER JOIN prendas ON prendas.`idprenda` = movimientos.`idprenda`
+	INNER JOIN tipoprenda ON tipoprenda.`idtipoprenda` = movimientos.`idtipoprenda`;
 END $$
 
+CALL spu_listar_movimientos()
 SELECT * FROM entrada

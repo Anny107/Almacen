@@ -21,8 +21,8 @@
                 <p class="text-white-50 mb-5">Ingrese su usuario y contraseña</p>
 
                 <div class="form-outline form-white mb-4">
-                  <label for="nomusu" class="form-label">Nombre usuario:</label>
-                  <input type="text" id="nomusu" class="form-control form-control-lg" >
+                  <label for="email" class="form-label">Nombre usuario:</label>
+                  <input type="email" id="email" class="form-control form-control-lg" placeholder="correo.gmail.com" >
                 </div>
 
                 <div class="form-outline form-white mb-4">
@@ -40,14 +40,14 @@
   </section>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const usuario = document.querySelector("#nomusu");
+      const email = document.querySelector("#email");
       const clave = document.querySelector("#contraseña")
       const btLogin = document.querySelector("#login")
 
       function inicioSesion(){
         const parametros = new URLSearchParams();
         parametros.append("operacion", "iniciarSesion");
-        parametros.append("usuario",usuario.value);
+        parametros.append("email",email.value);
         parametros.append("clave", clave.value);
 
         fetch('./controllers/usuario.controller.php', {
@@ -56,12 +56,12 @@
         })
         .then(respuesta => respuesta.json())
         .then(datos => {
-          if(datos){
-            alert('Bienvenido')
+          if(datos.login){
+            alert(`Bienvenido: ${datos.apellidos} ${datos.nombres}`)
             window.location.href = 'views/entrada.html';
           }
           else{
-
+            alert(datos.mensaje)
           }
         })
       }

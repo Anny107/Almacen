@@ -31,81 +31,81 @@
       </nav>
 
       <div class="container">
-        <div class="row g-2 mt-3">
-          
-          <div class="col-md-4">
-            <form id="form-prendas" action="">
-              <div class="card">
-                <div class="card-header">
-                Registro de entrada y salida
-                </div>
-                <div class="card-body">
-                  <div class="mb-3 row g-2">
-                      <div class="form-check">
-                      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                      <label class="form-check-label" for="flexRadioDefault1">
-                        Entrada
-                      </label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-                      <label class="form-check-label" for="flexRadioDefault2">
-                        Salida
-                      </label>
-                    </div>
+        <div class="row mt-3">
+            <div class="col-md-4">
+              <form id="form-prendas" action="">
+                <div class="card">
+                  <div class="card-header">
+                  Registro de entrada y salida
                   </div>
-                  
-                  <div class="mb-3">
-                    <div class="mb-3 row g-2">
-                      <div class="col-md">
-                        <label for="tipo" class="form-label">Categoria:</label>
-                         <select name="tipo" id="tipo" class="form-select form-select-sm" autofocus>
-                          <option value="">Seleccione</option>
-                        </select>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <div class="mb-3 row g-2">
+                        <div class="form-check col-md">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                        <label class="form-check-label" for="flexRadioDefault1">
+                          Entrada
+                        </label>
                       </div>
-                      <div class="col-md">
-                        <label for="descripcion" class="form-label">Descripcion:</label>
-                         <select name="descripcion" id="descripcion" class="form-select form-select-sm" autofocus>
-                          <option value="">Seleccione</option>
-                        </select>
+                      <div class="form-check col-md">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                        <label class="form-check-label" for="flexRadioDefault2">
+                          Salida
+                        </label>
                       </div>
                     </div>
-                  <div class = "mb-3">
-                    <label for="observaciones" class="form-label">Observaciones:</label>
-                    <input type="text" class="form-control form-control-sm" id="observaciones">
+                      <div class="mb-3 row g-2">
+                        <div class="col-md">
+                          <label for="tipo" class="form-label">Categoria:</label>
+                           <select name="tipo" id="tipo" class="form-select form-select-sm" autofocus>
+                            <option value="">Seleccione</option>
+                          </select>
+                        </div>
+                        <div class="col-md">
+                          <label for="descripcion" class="form-label">Descripcion:</label>
+                           <select name="descripcion" id="descripcion" class="form-select form-select-sm" autofocus>
+                            <option value="">Seleccione</option>
+                          </select>
+                        </div>
+                      </div>
+                    <div class = "mb-3">
+                      <label for="observaciones" class="form-label">Observaciones:</label>
+                      <input type="text" class="form-control form-control-sm" id="observaciones">
+                    </div>
+                    <div class="mb-3">
+                      <label for="cantidad" class="form-label">Cantidad:</label>
+                      <input type="text" class="form-control form-control-sm" id="cantidad">
+                    </div>
                   </div>
-                  <div class="mb-3">
-                    <label for="cantidad" class="form-label">Cantidad:</label>
-                    <input type="text" class="form-control form-control-sm" id="cantidad">
+                  <div class="card-footer text-muted">
+                    <div class="d-grid gap-2">
+                      <button class="btn btn-sm" type="button" id="guardar" style="background-color: rgb(229, 240, 127);">Guardar</button>
+                      <button class="btn btn-sm btn-secondary" type="reset" id="reiniciar">Reiniciar</button>
+                    </div>
+                  </div> 
                   </div>
                 </div>
-                <div class="card-footer text-muted">
-                  <div class="d-grid gap-2">
-                    <button class="btn btn-sm" type="button" id="guardar" style="background-color: rgb(229, 240, 127);">Guardar</button>
-                    <button class="btn btn-sm btn-secondary" type="reset" id="reiniciar">Reiniciar</button>
-                  </div>
-                </div> 
-                </div>
-              </div>
-            </form>
+              </form>
+            </div>
+            <div class="col-md-12 mt-3">
+              <table class="table table-sm table-striped" id="tabla-entrada">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Tipo prenda</th>
+                    <th>Descripcion</th>
+                    <th>Movimientos</th>
+                    <th>Cantidad</th>
+                    <th>Observaciones</th>
+                    <th>Fecha</th>
+                  </tr>
+                </thead>
+                <tbody>
+  
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div class="col-md-12">
-            <table class="table table-sm table-striped" id="tabla-entrada">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Tipo prenda</th>
-                  <th>Observaciones</th>
-                  <th>Cantidad</th>
-                  <th>Fecha</th>
-                </tr>
-              </thead>
-              <tbody>
-
-              </tbody>
-            </table>
-          </div>
-        </div>
         </div>
         <!--Formulario de registro de entrada-->
         
@@ -190,36 +190,38 @@
             }
           }
 
-          // function listaEntrada(){
-          //   const parametros = new URLSearchParams();
-          //   parametros.append("operacion", "listarEntrada");
+          function listaMovimientos(){
+            const parametros = new URLSearchParams();
+            parametros.append("operacion", "listarMovimientos");
 
-          //   fetch("../controllers/registro.controller.php", {
-          //     method: "POST",
-          //     body: parametros
-          //   })
-          //   .then(response => response.json())
-          //   .then(datos => {
-          //     cuerpoTabla.innerHTML = ``;
-          //     datos.forEach(element => {
-          //       const fila = 
-          //       `
-          //       <tr>
-          //         <td>${element.identrada}</td>
-          //         <td>${element.tipoprenda}</td>
-          //         <td>${element.observaciones}</td>
-          //         <td>${element.cantidad}</td>
-          //         <td>${element.fechaIngreso}</td>
-          //       </tr>
-          //       `;
-          //       cuerpoTabla.innerHTML +=fila;
-          //     })
-          //   })
-          // }
+            fetch("../controllers/registro.controller.php", {
+              method: "POST",
+              body: parametros
+            })
+            .then(response => response.json())
+            .then(datos => {
+              cuerpoTabla.innerHTML = ``;
+              datos.forEach(element => {
+                const fila = 
+                `
+                <tr>
+                  <td>${element.idmovimiento}</td>
+                  <td>${element.tipoprenda}</td>
+                  <td>${element.descripcion}</td>
+                  <td>${element.tipo}</td>
+                  <td>${element.cantidad}</td>
+                  <td>${element.observaciones}</td>
+                  <td>${element.fecha}</td>
+                </tr>
+                `;
+                cuerpoTabla.innerHTML +=fila;
+              })
+            })
+          }
 
         btguardar.addEventListener("click", registrarEntrada);
         tipo.addEventListener("change", mostrarDescripcion);
-        // listaEntrada();
+        listaMovimientos();
         mostrarTipo();
         })
       </script>
