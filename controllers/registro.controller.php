@@ -7,9 +7,10 @@ if(isset($_POST['operacion'])){
 
   if($_POST['operacion'] == 'registrarMovimientos'){
     $datosGuardados =[
+      "idtipoprenda"  => $_POST['idtipoprenda'],
       "idprenda"      => $_POST['idprenda'],
+      "tipo"          => $_POST['tipo'],
       "cantidad"      => $_POST['cantidad'],
-      "fechaIngreso"  => $_POST['fechaIngreso'],
       "observaciones" => $_POST['observaciones'],
     ];
       $respuesta = $registro->registrarMovimientos($datosGuardados);

@@ -1,7 +1,8 @@
 <?php
-// session_start();
+session_start();
 
-// date_default_timezone_set('America/Lima');
+$_SESSION["login"] = [];
+
 require_once '../models/usuario.php';
 if(isset($_POST['operacion'])){
 
@@ -14,7 +15,7 @@ if(isset($_POST['operacion'])){
   }
   if($_POST['operacion'] == 'iniciarSesion'){
     $acceso = [
-      "login" => false,
+      "status" => false,
       "apellidos" => "",
       "nombres" => "",
       "mensaje" => ""
@@ -24,7 +25,7 @@ if(isset($_POST['operacion'])){
 
     if($data){
       if(password_verify($claveIngresada, $data['clave'])){
-        $acceso["login"] = true;
+        $acceso["status"] = true;
         $acceso["apellidos"] = $data["apellidos"];
         $acceso["nombres"] = $data["nombres"];
       }else{
@@ -34,7 +35,9 @@ if(isset($_POST['operacion'])){
       $acceso["mensaje"] = "No se encontro el usuario";
     }
 
-    $_SESSION['seguridad'] = $acceso;
+    $_SESSION["login"] = $acceso;
+
     echo json_encode($acceso);
   }
 }
+?>

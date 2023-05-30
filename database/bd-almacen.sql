@@ -111,22 +111,12 @@ CREATE TABLE almacen
 (
 	idalmacen		INT AUTO_INCREMENT PRIMARY KEY,
 	idprenda			INT 			NOT NULL,
-	numalmacen		INT 			NOT NULL,
+	numestante		INT 			NOT NULL,
+	disponibilidad	CHAR(1)		NOT NULL DEFAULT 1,
 	cantprendas		INT 			NOT NULL,
 	CONSTRAINT fk_idprenda_alm FOREIGN KEY (idprenda) REFERENCES prendas(idprenda)
 )
 ENGINE = INNODB
-
-CREATE TABLE requerimientos
-(
-	idrequerimiento	INT AUTO_INCREMENT PRIMARY KEY,
-	idprenda				INT 	NOT NULL,
-	idusuario			INT 	NOT NULL,
-	fechapedido			DATE  NOT NULL,
-	cantrequerida		INT   NOT NULL,
-	CONSTRAINT ck_usuario FOREIGN KEY (idusuario) REFERENCES usuarios(idusuario),
-	CONSTRAINT ck_idprenda_re	FOREIGN KEY (idprenda) REFERENCES prendas(idprendas)               
-)ENGINE = INNODB
 
 -- Procedimientos almacenados
 -- Login
@@ -174,6 +164,7 @@ BEGIN
 END$$
 
 CALL spu_prendas_filtrar(3)
+
 -- Registrar entrada de prendas
 DELIMITER $$
 CREATE PROCEDURE spu_movimientos_registrar
@@ -192,6 +183,7 @@ END$$
 
 CALL spu_movimientos_registrar(3,9,'entrada', 210, '');
 
+-- Listar movimientos
 DELIMITER $$
 CREATE PROCEDURE spu_listar_movimientos()
 BEGIN
@@ -204,4 +196,20 @@ BEGIN
 END $$
 
 CALL spu_listar_movimientos()
-SELECT * FROM entrada
+
+DELIMITER $$
+CREATE PROCEDURE spu_movimiento_fecha
+(
+	IN _fecha DATE
+)
+BEGIN
+SELECT  
+	movimientos.`idmovimiento`,tipoprenda.`tipoprenda`, prendas.`descripcion`,
+	movimientos.`tipo`, movimientos.`cantidad`, movimientos.`observaciones`, movimientos.`fecha`  
+	FROM movimientos
+	INNER JOIN prendas ON prendas.`idprenda` = movimientos.`idprenda`
+	INNER JOIN tipoprenda ON tipoprenda.`idtipoprenda` = movimientos.`idtipoprenda`
+	WHERE movimientos.`fecha` = _fecha;
+END$$
+
+CALL spu_movimiento_fecha('2023-05-29')

@@ -22,7 +22,7 @@
 
                 <div class="form-outline form-white mb-4">
                   <label for="email" class="form-label">Nombre usuario:</label>
-                  <input type="email" id="email" class="form-control form-control-lg" placeholder="correo.gmail.com" >
+                  <input type="email" id="email" class="form-control form-control-lg" placeholder="correo@gmail.com" >
                 </div>
 
                 <div class="form-outline form-white mb-4">
@@ -56,14 +56,15 @@
         })
         .then(respuesta => respuesta.json())
         .then(datos => {
-          if(datos.login){
+          if(datos.status){
             alert(`Bienvenido: ${datos.apellidos} ${datos.nombres}`)
-            window.location.href = 'views/entrada.html';
+            window.location.href = './views/entrada.html';
           }
           else{
             alert(datos.mensaje)
           }
         })
+
       }
       btLogin.addEventListener("click",inicioSesion);
     })
