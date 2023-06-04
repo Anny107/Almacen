@@ -20,4 +20,12 @@ if(isset($_POST['operacion'])){
       echo json_encode($datos);
     }
   }
+
+  if($_POST['operacion'] == 'filtrarTipo'){
+    $datos = $prenda -> filtrarTipo($_POST['idtipoprenda']);
+
+    if($datos) {
+      echo json_encode($datos);
+    }
+  }
 }

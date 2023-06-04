@@ -1,6 +1,6 @@
 <?php
 
-require_once 'Conexion.php';
+require_once 'conexion.php';
 
 class Prendas extends Conexion{
   private $conexion;
@@ -24,6 +24,17 @@ class Prendas extends Conexion{
   public function listarDescripcion($idtipoprenda = 0){
     try{
       $consulta = $this->conexion->prepare("CALL spu_prendas_filtrar(?)");
+      $consulta->execute(array($idtipoprenda));
+      return $consulta->fetchAll(PDO::FETCH_ASSOC); 
+    }
+    catch(Exception $e){
+      die($e->getMessage());
+    }
+  }
+
+  public function filtrarTipo($idtipoprenda = 0){
+    try{
+      $consulta = $this->conexion->prepare("CALL spu_filtro_cate(?)");
       $consulta->execute(array($idtipoprenda));
       return $consulta->fetchAll(PDO::FETCH_ASSOC); 
     }
