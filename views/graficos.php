@@ -36,7 +36,7 @@ if (!isset($_SESSION['login']) || !$_SESSION['login']['status']){
           </li>
           <ul style="text-align: end;">
             <li class="nav-item">
-             <label class="nav-link" for="">Bienvenido <?=$_SESSION['login']['nombres'] ?> :D</label>
+             <label class="nav-link" for="">Bienvenido <?=$_SESSION['login']['nombres'] ?></label>
             </li>
           </ul>
         </ul>
@@ -125,7 +125,7 @@ if (!isset($_SESSION['login']) || !$_SESSION['login']['status']){
         let datos = []; // Eje Y
 
         coleccion.forEach(element => {
-          etiquetas.push(element.tipoprenda);
+          etiquetas.push(element.tipoprenda + ' '+ element.descripcion);
           datos.push(element.cantidad);
         });
         //Asignar datos
@@ -139,7 +139,7 @@ if (!isset($_SESSION['login']) || !$_SESSION['login']['status']){
         let datos = []; // Eje Y
 
         coleccion.forEach(element => {
-          etiquetas.push(element.tipoprenda);
+          etiquetas.push(element.tipoprenda + ' '+ element.descripcion);
           datos.push(element.cantidad);
         });
         //Asignar datos

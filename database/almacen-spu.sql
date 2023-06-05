@@ -145,7 +145,8 @@ CALL spu_movimiento_fecha('2023-05-20')
 DELIMITER $$
 CREATE PROCEDURE spu_grafico1()
 BEGIN
-	SELECT movimientos.`tipo`, movimientos.`cantidad`, movimientos.`fecha`, tipoprenda.`tipoprenda`
+	SELECT movimientos.`tipo`, movimientos.`cantidad`, movimientos.`fecha`, tipoprenda.`tipoprenda`,
+	prendas.`descripcion`
 	FROM movimientos
 	INNER JOIN prendas ON prendas.`idprenda` = movimientos.`idprenda`
 	INNER JOIN tipoprenda ON tipoprenda.`idtipoprenda` = movimientos.`idtipoprenda`
@@ -159,7 +160,8 @@ CALL spu_grafico1()
 DELIMITER $$
 CREATE PROCEDURE spu_grafico2()
 BEGIN
-	SELECT movimientos.`tipo`, movimientos.`cantidad`, movimientos.`fecha`, tipoprenda.`tipoprenda`
+	SELECT movimientos.`tipo`, movimientos.`cantidad`, movimientos.`fecha`, tipoprenda.`tipoprenda`,
+	prendas.`descripcion`
 	FROM movimientos
 	INNER JOIN prendas ON prendas.`idprenda` = movimientos.`idprenda`
 	INNER JOIN tipoprenda ON tipoprenda.`idtipoprenda` = movimientos.`idtipoprenda`

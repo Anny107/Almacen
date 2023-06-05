@@ -37,7 +37,7 @@
               </li>
               <ul style="text-align: end;">
                 <li class="nav-item">
-                  <label class="nav-link" for="">Bienvenido <?=$_SESSION['login']['nombres'] ?> :D</label>
+                  <label class="nav-link" for="">Bienvenido <?=$_SESSION['login']['nombres'] ?></label>
                 </li>
               </ul>
             </ul>
