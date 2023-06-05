@@ -1,3 +1,10 @@
+<?php
+session_start();
+if (!isset($_SESSION['login']) || !$_SESSION['login']['status']){
+    header("Location:../");
+}
+
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -17,30 +24,28 @@
           <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav">
               <li class="nav-item">
-                <a class="nav-link active" href="graficos.html">Graficos</a>
+                <a class="nav-link active" href="graficos.php">Graficos</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="movimientos.html">Entrada y Salida</a>
+                <a class="nav-link active" aria-current="page" href="movimientos.php">Entrada y Salida</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="lista.html">Productos disponibles</a>
+                <a class="nav-link active" href="../controllers/usuario.controller.php?operacion=destroy">Cerrar sesion</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="../index.html">Cerrar sesion</a>
+                <label for=""><?=$_SESSION['login']['nombres'] ?></label>
               </li>
             </ul>
           </div>
         </div>
       </nav>
-
-      
       
       <h1 style="text-align: center;" class="mt-3">Registro de movimientos</h1>
       <div class="d-grid  d-md-block">
         <div class="row g-2 p-5">
 
             <div class="col-md">
-              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalId">
+              <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalId">
                 Registro
               </button>
             </div>
@@ -53,10 +58,10 @@
               </select>
             </div>
             <div class="col-md">
-              <label for="cate" class="form-label">Fecha:</label>
+              <label for="fecha" class="form-label">Fecha:</label>
             </div>
             <div class="col-md">
-              <input type="date" class="form-control" id="">
+              <input type="date" class="form-control" id="fecha">
             </div>
 
             <div class="col-md">
@@ -67,7 +72,7 @@
       
       <div class="container">
         <!-- Modal trigger button -->
-        <div class="row mt-3">
+        <div class="row mt-1">
           <div class="col-md-4">
             </div>
             <div class="col-md-12 mt-3">
@@ -137,9 +142,9 @@
                 </form>
               </div>
               <div class="modal-footer">
-                <div class="row g-2">
+                <div class="col-md">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button class="btn btn-sm" type="button" id="guardar" style="background-color: rgb(229, 240, 127);">Guardar</button>
+                  <button class="btn" type="button" id="guardar" style="background-color: rgb(229, 240, 127);">Guardar</button>
                 </div>
               </div>
             </div>
@@ -161,7 +166,7 @@
     const cuerpoTabla = document.querySelector("tbody");
     const cate = document.querySelector("#cate");
     const btbuscar = document.querySelector("#buscar");
-
+    
     function mostrarTipo(){
     const parametros = new URLSearchParams();
     parametros.append("operacion","listarTipoPrenda");
@@ -266,10 +271,39 @@
           <td>${element.cantidad}</td>
           <td>${element.observaciones}</td>
           <td>${element.fecha}</td>
-          <td>${element.nombres}</td>
         </tr>
         `;
         cuerpoTabla.innerHTML += fila;
+        })
+      })
+    }
+
+    function filtrarfecha(){
+      const parametros = new URLSearchParams();
+      parametros.append("operacion", "filtroFecha");
+      parametros.append("fecha", fecha.value);
+
+      fetch("../controllers/registro.controller.php", {
+        method: "POST",
+        body: parametros
+      })
+      .then(response => response.json())
+      .then(datos => {
+        cuerpoTabla.innerHTML = ``;
+        datos.forEach(element => {
+          const fila = 
+          `
+          <tr>
+          <td>${element.idmovimiento}</td>
+          <td>${element.tipoprenda}</td>
+          <td>${element.descripcion}</td>
+          <td>${element.tipo}</td>
+          <td>${element.cantidad}</td>
+          <td>${element.observaciones}</td>
+          <td>${element.fecha}</td>
+        </tr>
+          `;
+          cuerpoTabla.innerHTML += fila;
         })
       })
     }
@@ -309,6 +343,7 @@
     tipo.addEventListener("change", mostrarDescripcion);
     mostrarTipo();
     selectfiltroCate();
+    fecha.addEventListener("change", filtrarfecha)
     cate.addEventListener("change", filtrarCategoria);
   })
 </script>

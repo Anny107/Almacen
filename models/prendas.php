@@ -42,4 +42,16 @@ class Prendas extends Conexion{
       die($e->getMessage());
     }
   }
+
+  public function grafico1(){
+    try{
+      $consulta = $this->conexion->prepare("CALL spu_grafico1()");
+      $consulta->execute();
+
+      return $consulta->fetchAll(PDO::FETCH_ASSOC);
+    }
+    catch(Exception $e){
+      die($e->getMessage());
+    }
+  }
 }

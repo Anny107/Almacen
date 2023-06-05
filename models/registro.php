@@ -43,7 +43,7 @@ class Registro extends Conexion{
     }
   }
 
-  public function reporteFecha($fecha){
+  public function filtroFecha($fecha){
     try{
       $consulta = $this->conexion->prepare("CALL spu_movimiento_fecha(?)");
       $consulta->execute(array($fecha));

@@ -1,3 +1,9 @@
+<?php
+session_start();
+if (!isset($_SESSION['login']) || !$_SESSION['login']['status']){
+    header("Location:../");
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,16 +23,16 @@
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active" href="graficos.html">Graficos</a>
+            <a class="nav-link active" href="graficos.php">Graficos</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="movimientos.html">Entrada y Salida</a>
+            <a class="nav-link active" aria-current="page" href="movimientos.php">Entrada y Salida</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="lista.html">Productos disponibles</a>
+            <a class="nav-link active" href="../controllers/usuario.controller.php?operacion=destroy">Cerrar sesion</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="../index.html">Cerrar sesion</a>
+            <label for=""><?=$_SESSION['login']['nombres'] ?></label>
           </li>
         </ul>
       </div>

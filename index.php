@@ -1,3 +1,10 @@
+<?php
+session_start();
+if (isset($_SESSION['login']) && $_SESSION['login']['status']){
+  header('Location:./views/');
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,7 +65,7 @@
         .then(datos => {
           if(datos.status){
             alert(`Bienvenido: ${datos.apellidos} ${datos.nombres}`)
-            window.location.href = './views/graficos.html';
+            window.location.href = './views/graficos.php';
           }
           else{
             alert(datos.mensaje)

@@ -24,4 +24,12 @@ if(isset($_POST['operacion'])){
       echo json_encode($data);
     }
   }
+
+  if($_POST['operacion'] == 'filtroFecha'){
+    $data = $registro->filtroFecha($_POST['fecha']);
+
+    if($data){
+      echo json_encode($data);
+    }
+  }
 }

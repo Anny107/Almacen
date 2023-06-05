@@ -8,14 +8,11 @@ if(isset($_POST['operacion'])){
 
   $usuario = new Usuario();
 
-  if($_POST['operacion'] == 'destroy'){
-    session_destroy();
-    session_unset();
-    header('Location: ../index.html');
-  }
+  
   if($_POST['operacion'] == 'iniciarSesion'){
     $acceso = [
       "status" => false,
+      "idusuario" => "",
       "apellidos" => "",
       "nombres" => "",
       "mensaje" => ""
@@ -26,6 +23,7 @@ if(isset($_POST['operacion'])){
     if($data){
       if(password_verify($claveIngresada, $data['clave'])){
         $acceso["status"] = true;
+        $acceso["idusuario"] = $data["idusuario"];
         $acceso["apellidos"] = $data["apellidos"];
         $acceso["nombres"] = $data["nombres"];
       }else{
@@ -39,5 +37,11 @@ if(isset($_POST['operacion'])){
 
     echo json_encode($acceso);
   }
+}
+if (isset($_GET['operacion']) == 'destroy'){
+  session_destroy();
+  session_unset();
+  header("location:../");
+  
 }
 ?>
