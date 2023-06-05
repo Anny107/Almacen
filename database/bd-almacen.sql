@@ -54,7 +54,7 @@ CREATE TABLE movimientos
 	idtipoprenda	INT 		NOT NULL,
 	idusuario 	INT 		NOT NULL,	
 	idprenda 	INT 		NOT NULL,
-	tipo 		VARCHAR(15)	NOT NULL,
+	tipo 		VARCHAR(15)	NOT NULL, -- 1 = ENTRADA, 2 = SALIDA
 	cantidad	INT 		NOT NULL,
 	fecha		DATE 		NOT NULL DEFAULT NOW(),
 	observaciones	VARCHAR(200)    NULL,

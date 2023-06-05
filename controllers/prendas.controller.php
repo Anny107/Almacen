@@ -36,4 +36,12 @@ if(isset($_POST['operacion'])){
       echo json_encode($datos);
     }
   }
+
+  if($_POST['operacion'] == 'grafico2'){
+    $datos = $prenda -> grafico2();
+
+    if($datos){
+      echo json_encode($datos);
+    }
+  }
 }

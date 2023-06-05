@@ -15,10 +15,11 @@ class Registro extends Conexion{
       "mensaje" => ""
     ];
     try{
-      $consulta = $this->conexion->prepare("CALL spu_movimientos_registrar(?,?,?,?,?)");
+      $consulta = $this->conexion->prepare("CALL spu_movimientos_registrar(?,?,?,?,?,?)");
       $respuesta["status"] = $consulta->execute(
         array(
           $datos["idtipoprenda"],
+          $datos["idusuario"],
           $datos["idprenda"],
           $datos["tipo"],
           $datos["cantidad"],
@@ -41,6 +42,30 @@ class Registro extends Conexion{
     catch(Exception $e){
       die($e->getMessage());
     }
+  }
+
+  public function editarMov($datos = []){
+    $respuesta = [
+      "status" => false,
+      "mensaje" => ""
+    ];
+    try{
+      $consulta = $this->conexion->prepare("CALL spu_movimientos_editar(?,?,?,?,?,?)");
+      $respuesta["status"] = $consulta->execute(
+        array(
+          $datos["idmovimiento"],
+          $datos["idtipoprenda"],
+          $datos["idprenda"],
+          $datos["tipo"],
+          $datos["cantidad"],
+          $datos["observaciones"]
+        )
+      );
+    }
+    catch(Exception $e){
+      $respuesta["mensaje"] = "No se pudo editar. Codigo". $e->getCode();
+    }
+    return $respuesta;
   }
 
   public function filtroFecha($fecha){

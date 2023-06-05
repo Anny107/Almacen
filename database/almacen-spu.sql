@@ -47,18 +47,39 @@ DELIMITER $$
 CREATE PROCEDURE spu_movimientos_registrar
 (
 	IN _idtipoprenda	INT,
+	IN _idusuario		INT,
 	IN _idprenda		INT,
-	IN _tipo				VARCHAR(15),
+	IN _tipo		VARCHAR(15),
 	IN _cantidad		INT,
 	IN _observaciones	VARCHAR(200)
 )
 BEGIN
-	IF _observaciones = '' THEN SET _observaciones = NULL;END IF;
-	INSERT INTO movimientos(idtipoprenda,idprenda, tipo, cantidad, observaciones) VALUES
-	(_idtipoprenda,_idprenda, _tipo, _cantidad, _observaciones);
+	INSERT INTO movimientos(idtipoprenda, idusuario,idprenda, tipo, cantidad, observaciones) VALUES
+	(_idtipoprenda, _idusuario, _idprenda, _tipo, _cantidad, _observaciones);
 END$$
 
 CALL spu_movimientos_registrar(3,9,'entrada', 210, '');
+
+-- Editar
+DELIMITER $$
+CREATE PROCEDURE spu_movimientos_editar
+(
+	IN _idmovimiento 	INT,
+	IN _idtipoprenda	INT,
+	IN _idprenda		INT,
+	IN _tipo		VARCHAR(15),
+	IN _cantidad		INT,
+	IN _observaciones	VARCHAR(200)
+)
+BEGIN
+	UPDATE movimientos SET
+	 idtipoprenda = _idtipoprenda,
+	 idprenda = _idprenda,
+	 tipo = _tipo,
+	 cantidad = _cantidad,
+	 observaciones = _observaciones
+	 WHERE idmovimiento = _idmovimiento;
+END$$
 
 -- Listar movimientos
 DELIMITER $$
@@ -92,7 +113,8 @@ BEGIN
 	INNER JOIN tipoprenda ON tipoprenda.`idtipoprenda` = movimientos.`idtipoprenda`
 	INNER JOIN usuarios ON usuarios.`idusuario` = movimientos.`idusuario`
 	INNER JOIN personas ON personas.`idpersona` = usuarios.`idpersona`
-	WHERE movimientos.`idtipoprenda` = _idtipoprenda;
+	WHERE movimientos.`idtipoprenda` = _idtipoprenda
+	ORDER BY movimientos.`idmovimiento`;
 END $$
 
 CALL spu_filtro_cate(2)
@@ -106,11 +128,42 @@ CREATE PROCEDURE spu_movimiento_fecha
 BEGIN
 SELECT  
 	movimientos.`idmovimiento`,tipoprenda.`tipoprenda`, prendas.`descripcion`,
-	movimientos.`tipo`, movimientos.`cantidad`, movimientos.`observaciones`  
+	movimientos.`tipo`, movimientos.`cantidad`, movimientos.`observaciones`, movimientos.`fecha`,
+	personas.`nombres` 
 	FROM movimientos
 	INNER JOIN prendas ON prendas.`idprenda` = movimientos.`idprenda`
 	INNER JOIN tipoprenda ON tipoprenda.`idtipoprenda` = movimientos.`idtipoprenda`
-	WHERE movimientos.`fecha` = _fecha;
+	INNER JOIN usuarios ON usuarios.`idusuario` = movimientos.`idusuario`
+	INNER JOIN personas ON personas.`idpersona` = usuarios.`idpersona`
+	WHERE movimientos.`fecha` = _fecha
+	ORDER BY movimientos.`idmovimiento`;
 END$$
 
 CALL spu_movimiento_fecha('2023-05-20')
+
+-- Graficos
+DELIMITER $$
+CREATE PROCEDURE spu_grafico1()
+BEGIN
+	SELECT movimientos.`tipo`, movimientos.`cantidad`, movimientos.`fecha`, tipoprenda.`tipoprenda`
+	FROM movimientos
+	INNER JOIN prendas ON prendas.`idprenda` = movimientos.`idprenda`
+	INNER JOIN tipoprenda ON tipoprenda.`idtipoprenda` = movimientos.`idtipoprenda`
+	WHERE movimientos.`tipo` = 'Entrada'
+	ORDER BY movimientos.`fecha`;
+END $$
+
+CALL spu_grafico1()
+
+-- Grafico 2
+DELIMITER $$
+CREATE PROCEDURE spu_grafico2()
+BEGIN
+	SELECT movimientos.`tipo`, movimientos.`cantidad`, movimientos.`fecha`, tipoprenda.`tipoprenda`
+	FROM movimientos
+	INNER JOIN prendas ON prendas.`idprenda` = movimientos.`idprenda`
+	INNER JOIN tipoprenda ON tipoprenda.`idtipoprenda` = movimientos.`idtipoprenda`
+	WHERE movimientos.`tipo` = 'Salida'
+	ORDER BY movimientos.`fecha`;
+END$$
+

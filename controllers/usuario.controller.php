@@ -41,7 +41,7 @@ if(isset($_POST['operacion'])){
 if (isset($_GET['operacion']) == 'destroy'){
   session_destroy();
   session_unset();
-  header("location:../");
+  header("location:../index.php");
   
 }
 ?>

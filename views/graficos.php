@@ -29,14 +29,125 @@ if (!isset($_SESSION['login']) || !$_SESSION['login']['status']){
             <a class="nav-link active" aria-current="page" href="movimientos.php">Entrada y Salida</a>
           </li>
           <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="reportes.php">Reportes</a>
+              </li>
+          <li class="nav-item">
             <a class="nav-link active" href="../controllers/usuario.controller.php?operacion=destroy">Cerrar sesion</a>
           </li>
-          <li class="nav-item">
-            <label for=""><?=$_SESSION['login']['nombres'] ?></label>
-          </li>
+          <ul style="text-align: end;">
+            <li class="nav-item">
+             <label class="nav-link" for="">Bienvenido <?=$_SESSION['login']['nombres'] ?> :D</label>
+            </li>
+          </ul>
         </ul>
       </div>
     </div>
   </nav>
+  <div class="row mt-3">
+      <div class="col-md-6">
+        <!--grafico 1-->
+        <canvas id="grafico1">
+
+        </canvas>
+      </div>
+      <div class="col-md-6">
+        <!--grafico 2-->
+          <canvas id="grafico2">
+
+          </canvas>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const grafico1 = document.querySelector("#grafico1");
+    const grafico2 = document.querySelector("#grafico2");
+
+    const graficoBarras = new Chart(grafico1, {
+        type: 'line',
+        data: {
+          labels:[],
+          datasets: [
+            {        
+              label: 'Entradas',
+              data: [],
+              backgroundColor: ['#2FAABB', '#347E9E','#49B080','#D29F59','#D9B954','#6C5BDD','#DD5B88']
+            }
+          ]
+        }
+      })
+
+      const graficoBarras2= new Chart(grafico2, {
+        type: 'bar',
+        data: {
+          labels:[],
+          datasets: [
+            {        
+              label: 'Salida',
+              data: [],
+              backgroundColor: ['#2FAABB', '#347E9E','#49B080','#D29F59','#D9B954','#6C5BDD','#DD5B88']
+            }
+          ]
+        }
+      })
+
+      function datosBarras() {
+        const parametros = new URLSearchParams();
+        parametros.append("operacion", "grafico1")
+        fetch("../controllers/prendas.controller.php", {
+          method : "POST",
+          body: parametros
+        })
+        .then(response => response.json())
+        .then(datos => {
+          graphic(datos);
+        });
+      }
+
+      function datosBarras2() {
+        const parametros = new URLSearchParams();
+        parametros.append("operacion", "grafico2")
+        fetch("../controllers/prendas.controller.php", {
+          method : "POST",
+          body: parametros
+        })
+        .then(response => response.json())
+        .then(datos => {
+          graphic2(datos);
+        });
+      }
+
+      function graphic(coleccion = []){
+        let etiquetas = []; // Eje x
+        let datos = []; // Eje Y
+
+        coleccion.forEach(element => {
+          etiquetas.push(element.tipoprenda);
+          datos.push(element.cantidad);
+        });
+        //Asignar datos
+        graficoBarras.data.labels = etiquetas;
+        graficoBarras.data.datasets[0].data = datos;
+        graficoBarras.update();
+      }
+
+      function graphic2(coleccion = []){
+        let etiquetas = []; // Eje x
+        let datos = []; // Eje Y
+
+        coleccion.forEach(element => {
+          etiquetas.push(element.tipoprenda);
+          datos.push(element.cantidad);
+        });
+        //Asignar datos
+        graficoBarras2.data.labels = etiquetas;
+        graficoBarras2.data.datasets[0].data = datos;
+        graficoBarras2.update();
+      }
+      datosBarras2();
+      datosBarras();
+  })
+</script>

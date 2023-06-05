@@ -1,9 +1,9 @@
 <?php
-session_start();
-if (!isset($_SESSION['login']) || !$_SESSION['login']['status']){
+  session_start();
+  if (!isset($_SESSION['login']) || !$_SESSION['login']['status']){
     header("Location:../");
-}
-
+  }
+  $responseJSON = json_encode($_SESSION['login']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -30,46 +30,36 @@ if (!isset($_SESSION['login']) || !$_SESSION['login']['status']){
                 <a class="nav-link active" aria-current="page" href="movimientos.php">Entrada y Salida</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="../controllers/usuario.controller.php?operacion=destroy">Cerrar sesion</a>
+                <a class="nav-link active" aria-current="page" href="reportes.php">Reportes</a>
               </li>
               <li class="nav-item">
-                <label for=""><?=$_SESSION['login']['nombres'] ?></label>
+                <a class="nav-link active" href="../controllers/usuario.controller.php?operacion=destroy">Cerrar sesion</a>
               </li>
+              <ul style="text-align: end;">
+                <li class="nav-item">
+                  <label class="nav-link" for="">Bienvenido <?=$_SESSION['login']['nombres'] ?> :D</label>
+                </li>
+              </ul>
             </ul>
           </div>
         </div>
       </nav>
       
-      <h1 style="text-align: center;" class="mt-3">Registro de movimientos</h1>
-      <div class="d-grid  d-md-block">
-        <div class="row g-2 p-5">
-
-            <div class="col-md">
-              <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalId">
-                Registro
-              </button>
-            </div>
-            <div class="col-md">
-              <label for="cate" class="form-label">Categoria:</label>
-            </div>
-            <div class="col-md">
-              <select name="cate" id="cate" class="form-select" autofocus>
-                <option value="">Seleccione</option>
-              </select>
-            </div>
-            <div class="col-md">
-              <label for="fecha" class="form-label">Fecha:</label>
-            </div>
-            <div class="col-md">
-              <input type="date" class="form-control" id="fecha">
-            </div>
-
-            <div class="col-md">
-              <button type="button" class="btn btn-outline-success" id="buscar">Buscar</button>
-            </div>
-        </div>
-      </div>
-      
+      <h1 style="text-align: center;" class="mt-3">Registro de movimientos</h1> 
+        <div class="row mt-3">
+          <div class="col-md-3"></div>
+          <div class="col-md-2" >
+            <button type="button" class="btn btn-outline-success btn-large" data-bs-toggle="modal" data-bs-target="#modalId">Registro</button>
+          </div>
+          <div class="col-md-1">
+            <label for="cate" class="form-label">Categoria:</label>
+          </div>
+          <div class="col-md-2">
+            <select name="cate" id="cate" class="form-select" autofocus>
+              <option value="">Seleccione</option>
+            </select>
+          </div>
+        </div>      
       <div class="container">
         <!-- Modal trigger button -->
         <div class="row mt-1">
@@ -154,18 +144,20 @@ if (!isset($_SESSION['login']) || !$_SESSION['login']['status']){
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
+    //cajas de texto
     const movi = document.querySelector("#movi");
     const tipo = document.querySelector("#tipo");
     const observaciones = document.querySelector("#observaciones");
     const cantidad = document.querySelector("#cantidad");
     const fecha = document.querySelector("#fecha");
     const descripcion = document.querySelector("#descripcion");
+    const cate = document.querySelector("#cate");
+    //Botones
     const btguardar = document.querySelector("#guardar");
     const btreiniciar = document.querySelector("#reiniciar");
+    //Tabla
     const tabla = document.querySelector("#tabla-entrada");
     const cuerpoTabla = document.querySelector("tbody");
-    const cate = document.querySelector("#cate");
-    const btbuscar = document.querySelector("#buscar");
     
     function mostrarTipo(){
     const parametros = new URLSearchParams();
@@ -204,33 +196,7 @@ if (!isset($_SESSION['login']) || !$_SESSION['login']['status']){
         })
       })
     }
-            
-    function registrarMov(){
-      if(confirm('¿Esta seguro de guardar los datos?')){
-        const parametros = new URLSearchParams();
-        parametros.append("operacion","registrarMovimientos");
-        parametros.append("tipo", movi.value);
-        parametros.append("idtipoprenda",tipo.value);
-        parametros.append("idprenda", descripcion.value)
-        parametros.append("cantidad", cantidad.value);
-        parametros.append("observaciones", observaciones.value);
-
-        fetch("../controllers/registro.controller.php", {
-          method: 'POST',
-          body: parametros
-          })
-          .then(response => response.json())
-          .then(datos => {
-            if(datos.status){
-            document.querySelector("#form-prendas").reset();
-          }else{
-            alert(datos.mensaje)
-          }
-        })
-      }
-    }
-
-    function selectfiltroCate(){
+    function listaCate(){
     const parametros = new URLSearchParams();
     parametros.append("operacion","listarTipoPrenda");
     fetch('../controllers/prendas.controller.php',{
@@ -277,35 +243,36 @@ if (!isset($_SESSION['login']) || !$_SESSION['login']['status']){
         })
       })
     }
+            
+    function registrarMov(){
+      if(confirm('¿Esta seguro de guardar los datos?')){
+        const parametros = new URLSearchParams();
 
-    function filtrarfecha(){
-      const parametros = new URLSearchParams();
-      parametros.append("operacion", "filtroFecha");
-      parametros.append("fecha", fecha.value);
+        const response = <?php echo $responseJSON;?>;
+        const idusuario = response.idusuario;
 
-      fetch("../controllers/registro.controller.php", {
-        method: "POST",
-        body: parametros
-      })
-      .then(response => response.json())
-      .then(datos => {
-        cuerpoTabla.innerHTML = ``;
-        datos.forEach(element => {
-          const fila = 
-          `
-          <tr>
-          <td>${element.idmovimiento}</td>
-          <td>${element.tipoprenda}</td>
-          <td>${element.descripcion}</td>
-          <td>${element.tipo}</td>
-          <td>${element.cantidad}</td>
-          <td>${element.observaciones}</td>
-          <td>${element.fecha}</td>
-        </tr>
-          `;
-          cuerpoTabla.innerHTML += fila;
+        parametros.append("operacion","registrarMovimientos");
+        parametros.append("idusuario",parseInt(idusuario));
+        parametros.append("tipo", movi.value);
+        parametros.append("idtipoprenda",tipo.value);
+        parametros.append("idprenda", descripcion.value)
+        parametros.append("cantidad", cantidad.value);
+        parametros.append("observaciones", observaciones.value);
+
+        fetch("../controllers/registro.controller.php", {
+          method: 'POST',
+          body: parametros
+          })
+          .then(response => response.json())
+          .then(datos => {
+            if(datos.status){
+            document.querySelector("#form-prendas").reset();
+            listaMovimientos();
+          }else{
+            alert(datos.mensaje)
+          }
         })
-      })
+      }
     }
 
     function listaMovimientos(){
@@ -338,13 +305,13 @@ if (!isset($_SESSION['login']) || !$_SESSION['login']['status']){
       })
     }
 
-    //btguardar.addEventListener("click", registrarMov);
+    btguardar.addEventListener("click", registrarMov);
     listaMovimientos();
+    listaCate();
+    cate.addEventListener("change", filtrarCategoria);
     tipo.addEventListener("change", mostrarDescripcion);
     mostrarTipo();
     selectfiltroCate();
-    fecha.addEventListener("change", filtrarfecha)
-    cate.addEventListener("change", filtrarCategoria);
   })
 </script>
 </body>
