@@ -36,7 +36,7 @@ CREATE TABLE `movimientos` (
   CONSTRAINT `fk_idprenda` FOREIGN KEY (`idprenda`) REFERENCES `prendas` (`idprenda`),
   CONSTRAINT `fk_idtipoprenda_MOV` FOREIGN KEY (`idtipoprenda`) REFERENCES `tipoprenda` (`idtipoprenda`),
   CONSTRAINT `fk_idusu` FOREIGN KEY (`idusuario`) REFERENCES `usuarios` (`idusuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `movimientos` */
 
@@ -73,7 +73,8 @@ insert  into `movimientos`(`idmovimiento`,`idtipoprenda`,`idusuario`,`idprenda`,
 (30,5,2,20,'Salida',1,'2023-05-23','Cierre mal colocado'),
 (31,4,1,15,'Salida',50,'2023-06-04','Para ventas'),
 (32,2,3,7,'Entrada',30,'2023-06-04',NULL),
-(33,5,3,19,'Salida',30,'2023-06-04','');
+(33,5,3,19,'Salida',30,'2023-06-04',''),
+(34,5,1,17,'Entrada',95,'2023-06-06','Nuevos modelos en casacas');
 
 /*Table structure for table `personas` */
 
@@ -204,6 +205,31 @@ BEGIN
 END */$$
 DELIMITER ;
 
+/* Procedure structure for procedure `spu_filtro_descrip` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `spu_filtro_descrip` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_filtro_descrip`(
+	IN _idtipoprenda INT,
+	in _idprenda int
+)
+BEGIN
+   SELECT
+	movimientos.`idmovimiento`,tipoprenda.`tipoprenda`, prendas.`descripcion`,
+	movimientos.`tipo`, movimientos.`cantidad`, movimientos.`observaciones`, movimientos.`fecha`,
+	personas.`nombres` 
+	FROM movimientos
+	INNER JOIN prendas ON prendas.`idprenda` = movimientos.`idprenda`
+	INNER JOIN tipoprenda ON tipoprenda.`idtipoprenda` = movimientos.`idtipoprenda`
+	INNER JOIN usuarios ON usuarios.`idusuario` = movimientos.`idusuario`
+	INNER JOIN personas ON personas.`idpersona` = usuarios.`idpersona`
+	WHERE movimientos.`idtipoprenda` = _idtipoprenda and movimientos.`idprenda` = _idprenda
+	ORDER BY movimientos.`idmovimiento`;
+END */$$
+DELIMITER ;
+
 /* Procedure structure for procedure `spu_grafico1` */
 
 /*!50003 DROP PROCEDURE IF EXISTS  `spu_grafico1` */;
@@ -212,7 +238,8 @@ DELIMITER $$
 
 /*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_grafico1`()
 BEGIN
-	SELECT movimientos.`tipo`, movimientos.`cantidad`, movimientos.`fecha`, tipoprenda.`tipoprenda`
+	SELECT movimientos.`tipo`, movimientos.`cantidad`, movimientos.`fecha`, tipoprenda.`tipoprenda`,
+	prendas.`descripcion`
 	FROM movimientos
 	INNER JOIN prendas ON prendas.`idprenda` = movimientos.`idprenda`
 	INNER JOIN tipoprenda ON tipoprenda.`idtipoprenda` = movimientos.`idtipoprenda`
@@ -228,14 +255,15 @@ DELIMITER ;
 DELIMITER $$
 
 /*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_grafico2`()
-begin
-	SELECT movimientos.`tipo`, movimientos.`cantidad`, movimientos.`fecha`, tipoprenda.`tipoprenda`
+BEGIN
+	SELECT movimientos.`tipo`, movimientos.`cantidad`, movimientos.`fecha`, tipoprenda.`tipoprenda`,
+	prendas.`descripcion`
 	FROM movimientos
 	INNER JOIN prendas ON prendas.`idprenda` = movimientos.`idprenda`
 	INNER JOIN tipoprenda ON tipoprenda.`idtipoprenda` = movimientos.`idtipoprenda`
 	WHERE movimientos.`tipo` = 'Salida'
 	ORDER BY movimientos.`fecha`;
-end */$$
+END */$$
 DELIMITER ;
 
 /* Procedure structure for procedure `spu_listar_movimientos` */

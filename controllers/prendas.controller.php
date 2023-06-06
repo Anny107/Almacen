@@ -29,6 +29,14 @@ if(isset($_POST['operacion'])){
     }
   }
 
+  if($_POST['operacion'] == 'filtrarDes'){
+    $datos = $prenda -> filtrarDes($_POST['idtipoprenda'], $_POST['idprenda']);
+
+    if($datos) {
+      echo json_encode($datos);
+    }
+  }
+
   if($_POST['operacion'] == 'grafico1'){
     $datos = $prenda -> grafico1();
 

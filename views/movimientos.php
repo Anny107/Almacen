@@ -15,7 +15,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgb(229, 240, 127);">
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color:#E4C4E8;">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">Almacen Jony's</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,13 +49,21 @@
         <div class="row mt-3">
           <div class="col-md-3"></div>
           <div class="col-md-2" >
-            <button type="button" class="btn btn-outline-success btn-large" data-bs-toggle="modal" data-bs-target="#modalId">Registro</button>
+            <button type="button" class="btn btn-large" data-bs-toggle="modal" data-bs-target="#modalId" style="background-color: #E4C4E8;">Registro</button>
           </div>
           <div class="col-md-1">
             <label for="cate" class="form-label">Categoria:</label>
           </div>
           <div class="col-md-2">
             <select name="cate" id="cate" class="form-select" autofocus>
+              <option value="">Seleccione</option>
+            </select>
+          </div>
+          <div class="col-md-1">
+            <label for="des" class="form-label">Descripcion:</label>
+          </div>
+          <div class="col-md-2">
+            <select name="des" id="des" class="form-select" autofocus>
               <option value="">Seleccione</option>
             </select>
           </div>
@@ -66,7 +74,7 @@
           <div class="col-md-4">
             </div>
             <div class="col-md-12 mt-3">
-              <table class="table table-sm table-striped" id="tabla-entrada">
+              <table class="table table-sm table-striped"  id="tabla-entrada">
                 <thead>
                   <tr>
                     <th>ID</th>
@@ -152,6 +160,7 @@
     const fecha = document.querySelector("#fecha");
     const descripcion = document.querySelector("#descripcion");
     const cate = document.querySelector("#cate");
+    const des = document.querySelector("#des");
     //Botones
     const btguardar = document.querySelector("#guardar");
     const btreiniciar = document.querySelector("#reiniciar");
@@ -188,6 +197,7 @@
       })
       .then(response => response.json())
       .then(lista => {
+        descripcion.innerHTML = "<option value=''>Seleccione</option>";
         lista.forEach(element => {
           const optionTag = document.createElement("option");
           optionTag.value = element.idprenda;
@@ -196,28 +206,50 @@
         })
       })
     }
+    
     function listaCate(){
-    const parametros = new URLSearchParams();
-    parametros.append("operacion","listarTipoPrenda");
-    fetch('../controllers/prendas.controller.php',{
-      method: 'POST',
-      body: parametros
-    })
-    .then(response => response.json())
-    .then(lista => {
-      lista.forEach(element => {
-      const optionTag = document.createElement("option"); 
-      optionTag.value = element.idtipoprenda;
-      optionTag.text= element.tipoprenda;
-      cate.appendChild(optionTag);
-        })
-      }) 
+      const parametros = new URLSearchParams();
+      parametros.append("operacion","listarTipoPrenda");
+      fetch('../controllers/prendas.controller.php',{
+        method: 'POST',
+        body: parametros
+      })
+      .then(response => response.json())
+      .then(lista => {
+        lista.forEach(element => {
+        const optionTag = document.createElement("option"); 
+        optionTag.value = element.idtipoprenda;
+        optionTag.text= element.tipoprenda;
+        cate.appendChild(optionTag);
+          })
+        }) 
     }
 
-    function filtrarCategoria(){
+    function listaDescrip(){
       const parametros = new URLSearchParams();
-      parametros.append("operacion", "filtrarTipo");
+      parametros.append("operacion", "listarDescripcion");
+      parametros.append("idtipoprenda", parseInt(cate.value))
+
+      fetch("../controllers/prendas.controller.php",{
+        method: 'POST',
+        body: parametros
+        })
+        .then(response => response.json())
+        .then(lista => {
+          des.innerHTML = "<option value=''>Seleccione</option>";
+          lista.forEach(element => {
+            const optionTag = document.createElement("option");
+            optionTag.value = element.idprenda;
+            optionTag.text = element.descripcion;
+            des.appendChild(optionTag);
+          })
+        })
+    }
+    function filtrardes(){
+      const parametros = new URLSearchParams();
+      parametros.append("operacion", "filtrarDes");
       parametros.append("idtipoprenda", parseInt(cate.value));
+      parametros.append("idprenda", parseInt(des.value));
 
       fetch("../controllers/prendas.controller.php", {
         method: "POST",
@@ -237,10 +269,15 @@
           <td>${element.cantidad}</td>
           <td>${element.observaciones}</td>
           <td>${element.fecha}</td>
+          <td></td>
         </tr>
         `;
         cuerpoTabla.innerHTML += fila;
         })
+      })
+      .catch(error => {
+        cuerpoTabla.innerHTML = ``;
+        alert('No hay datos');
       })
     }
             
@@ -308,10 +345,10 @@
     btguardar.addEventListener("click", registrarMov);
     listaMovimientos();
     listaCate();
-    cate.addEventListener("change", filtrarCategoria);
+    cate.addEventListener("change", listaDescrip);
+    des.addEventListener("change", filtrardes);
     tipo.addEventListener("change", mostrarDescripcion);
     mostrarTipo();
-    selectfiltroCate();
   })
 </script>
 </body>

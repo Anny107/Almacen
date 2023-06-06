@@ -43,6 +43,17 @@ class Prendas extends Conexion{
     }
   }
 
+  public function filtrarDes($idtipoprenda = 0, $idprenda = 0){
+    try{
+      $consulta = $this->conexion->prepare("CALL spu_filtro_descrip(?,?)");
+      $consulta->execute(array($idtipoprenda, $idprenda));
+      return $consulta->fetchAll(PDO::FETCH_ASSOC); 
+    }
+    catch(Exception $e){
+      die($e->getMessage());
+    }
+  }
+
   public function grafico1(){
     try{
       $consulta = $this->conexion->prepare("CALL spu_grafico1()");

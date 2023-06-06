@@ -14,7 +14,7 @@ if (!isset($_SESSION['login']) || !$_SESSION['login']['status']){
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgb(229, 240, 127);">
+  <nav class="navbar navbar-expand-lg navbar-light" style="background-color:#E4C4E8;">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Almacen Jony's</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,7 +74,7 @@ if (!isset($_SESSION['login']) || !$_SESSION['login']['status']){
             {        
               label: 'Entradas',
               data: [],
-              backgroundColor: ['#2FAABB', '#347E9E','#49B080','#D29F59','#D9B954','#6C5BDD','#DD5B88']
+              backgroundColor: ['#7FB3D5', '#BF7EE1','#E17EA2','#83E17E','#EE4813','#EE9B13','#132EEE']
             }
           ]
         }
@@ -88,7 +88,8 @@ if (!isset($_SESSION['login']) || !$_SESSION['login']['status']){
             {        
               label: 'Salida',
               data: [],
-              backgroundColor: ['#2FAABB', '#347E9E','#49B080','#D29F59','#D9B954','#6C5BDD','#DD5B88']
+              backgroundColor: ['#7FB3D5', '#BF7EE1','#E17EA2','#83E17E','#EE4813','#EE9B13','#132EEE']
+              //backgroundColor: ['#2FAABB', '#347E9E','#49B080','#D29F59','#D9B954','#6C5BDD','#DD5B88']
             }
           ]
         }

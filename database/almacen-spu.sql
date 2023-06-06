@@ -119,6 +119,27 @@ END $$
 
 CALL spu_filtro_cate(2)
 
+-- Filtro principal
+DELIMITER $$
+CREATE PROCEDURE spu_filtro_descrip
+(
+	IN _idtipoprenda INT,
+	IN _idprenda INT
+)
+BEGIN
+   SELECT
+	movimientos.`idmovimiento`,tipoprenda.`tipoprenda`, prendas.`descripcion`,
+	movimientos.`tipo`, movimientos.`cantidad`, movimientos.`observaciones`, movimientos.`fecha`,
+	personas.`nombres` 
+	FROM movimientos
+	INNER JOIN prendas ON prendas.`idprenda` = movimientos.`idprenda`
+	INNER JOIN tipoprenda ON tipoprenda.`idtipoprenda` = movimientos.`idtipoprenda`
+	INNER JOIN usuarios ON usuarios.`idusuario` = movimientos.`idusuario`
+	INNER JOIN personas ON personas.`idpersona` = usuarios.`idpersona`
+	WHERE movimientos.`idtipoprenda` = _idtipoprenda AND movimientos.`idprenda` = _idprenda
+	ORDER BY movimientos.`idmovimiento`;
+END $$
+
 -- Reporte de dia
 DELIMITER $$
 CREATE PROCEDURE spu_movimiento_fecha
@@ -169,3 +190,4 @@ BEGIN
 	ORDER BY movimientos.`fecha`;
 END$$
 
+	
